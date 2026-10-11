@@ -1,0 +1,6 @@
+{
+  "name": "Russian Government Tutor (Управление в русском языке)",
+  "description": "Tutrice interattiva e app di apprendimento 100% offline basata sul manuale 'Какой падеж? Какой предлог? Глагольное и именное управление' di A.V. Velichko e O.N. Bashlakova. Esercizi guidati, spiegazioni in italiano e dizionario delle reggenze.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
