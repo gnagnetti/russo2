@@ -29,9 +29,12 @@ export function loadUserStats(): UserStats {
     return {
       ...INITIAL_STATS,
       ...parsed,
+      completedExerciseIds: Array.isArray(parsed.completedExerciseIds) ? parsed.completedExerciseIds : [],
+      incorrectExerciseIds: Array.isArray(parsed.incorrectExerciseIds) ? parsed.incorrectExerciseIds : [],
+      bookmarkedExerciseIds: Array.isArray(parsed.bookmarkedExerciseIds) ? parsed.bookmarkedExerciseIds : [],
       byCase: {
         ...INITIAL_STATS.byCase,
-        ...(parsed.byCase || {}),
+        ...(parsed.byCase && typeof parsed.byCase === 'object' ? parsed.byCase : {}),
       },
     };
   } catch {
@@ -53,13 +56,25 @@ export function recordExerciseAttempt(
   targetCase: CaseType,
   isCorrect: boolean
 ): UserStats {
-  const newStreak = isCorrect ? stats.streak + 1 : 0;
-  const newMaxStreak = Math.max(stats.maxStreak, newStreak);
+  const safeStats: UserStats = {
+    ...INITIAL_STATS,
+    ...(stats || {}),
+    completedExerciseIds: Array.isArray(stats?.completedExerciseIds) ? stats.completedExerciseIds : [],
+    incorrectExerciseIds: Array.isArray(stats?.incorrectExerciseIds) ? stats.incorrectExerciseIds : [],
+    bookmarkedExerciseIds: Array.isArray(stats?.bookmarkedExerciseIds) ? stats.bookmarkedExerciseIds : [],
+    byCase: {
+      ...INITIAL_STATS.byCase,
+      ...(stats?.byCase || {}),
+    },
+  };
 
-  const completedSet = new Set(stats.completedExerciseIds);
+  const newStreak = isCorrect ? (safeStats.streak || 0) + 1 : 0;
+  const newMaxStreak = Math.max(safeStats.maxStreak || 0, newStreak);
+
+  const completedSet = new Set(safeStats.completedExerciseIds);
   completedSet.add(exerciseId);
 
-  const incorrectSet = new Set(stats.incorrectExerciseIds);
+  const incorrectSet = new Set(safeStats.incorrectExerciseIds);
   if (!isCorrect) {
     incorrectSet.add(exerciseId);
   } else {
@@ -67,19 +82,19 @@ export function recordExerciseAttempt(
     incorrectSet.delete(exerciseId);
   }
 
-  const currentCase = stats.byCase[targetCase] || { total: 0, correct: 0 };
+  const currentCase = safeStats.byCase[targetCase] || { total: 0, correct: 0 };
   const updatedByCase = {
-    ...stats.byCase,
+    ...safeStats.byCase,
     [targetCase]: {
-      total: currentCase.total + 1,
-      correct: currentCase.correct + (isCorrect ? 1 : 0),
+      total: (currentCase.total || 0) + 1,
+      correct: (currentCase.correct || 0) + (isCorrect ? 1 : 0),
     },
   };
 
   const updated: UserStats = {
-    ...stats,
-    totalAnswered: stats.totalAnswered + 1,
-    totalCorrect: stats.totalCorrect + (isCorrect ? 1 : 0),
+    ...safeStats,
+    totalAnswered: (safeStats.totalAnswered || 0) + 1,
+    totalCorrect: (safeStats.totalCorrect || 0) + (isCorrect ? 1 : 0),
     streak: newStreak,
     maxStreak: newMaxStreak,
     completedExerciseIds: Array.from(completedSet),
@@ -92,7 +107,8 @@ export function recordExerciseAttempt(
 }
 
 export function toggleBookmark(stats: UserStats, exerciseId: string): UserStats {
-  const bookmarks = new Set(stats.bookmarkedExerciseIds);
+  const safeBookmarks = Array.isArray(stats?.bookmarkedExerciseIds) ? stats.bookmarkedExerciseIds : [];
+  const bookmarks = new Set(safeBookmarks);
   if (bookmarks.has(exerciseId)) {
     bookmarks.delete(exerciseId);
   } else {

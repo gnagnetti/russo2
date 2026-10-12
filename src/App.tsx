@@ -13,21 +13,19 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('tutor');
   const [showHero, setShowHero] = useState<boolean>(true);
   const [stats, setStats] = useState<UserStats>(loadUserStats);
+  const [quickPracticeTrigger, setQuickPracticeTrigger] = useState<number>(0);
 
   // Filters passed down to Tutor when navigated from other views
   const [tutorSectionFilter, setTutorSectionFilter] = useState<SectionId | 'all' | 'errors'>('all');
   const [tutorCaseFilter, setTutorCaseFilter] = useState<CaseType | 'all'>('all');
   const [dictionarySearchQuery, setDictionarySearchQuery] = useState<string>('');
 
-  useEffect(() => {
-    // If user interacts heavily, hero can be collapsed or minimized
-  }, []);
-
   const handleQuickPractice = () => {
     setTutorSectionFilter('all');
     setTutorCaseFilter('all');
     setActiveTab('tutor');
     setShowHero(false);
+    setQuickPracticeTrigger((prev) => prev + 1);
   };
 
   const handleStartSectionPractice = (sectionId: SectionId) => {
@@ -81,6 +79,7 @@ export default function App() {
             onStartTutor={() => setShowHero(false)}
             onExploreChapters={() => setActiveTab('chapters')}
             onOpenDictionary={() => setActiveTab('dictionary')}
+            onDismiss={() => setShowHero(false)}
           />
         )}
 
@@ -89,6 +88,7 @@ export default function App() {
           <TutorInteractiveMode
             initialFilterSection={tutorSectionFilter}
             initialFilterCase={tutorCaseFilter}
+            quickPracticeTrigger={quickPracticeTrigger}
             stats={stats}
             onUpdateStats={setStats}
             onOpenTables={() => setActiveTab('tables')}

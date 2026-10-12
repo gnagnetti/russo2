@@ -99,37 +99,57 @@ export const TopBar: React.FC<TopBarProps> = ({
         </div>
       </div>
 
-      {/* Mobile Nav Row */}
-      <div className="md:hidden flex items-center justify-around border-t border-stone-100 px-2 py-2 overflow-x-auto text-xs font-medium text-stone-600 bg-stone-50/80">
+      {/* Mobile Nav Row - Touch-friendly with min touch targets */}
+      <div className="md:hidden flex items-center justify-around border-t border-stone-200/80 px-2 py-1.5 overflow-x-auto text-xs font-medium text-stone-600 bg-stone-50/90 no-scrollbar">
         <button
           onClick={() => onSelectTab('tutor')}
-          className={`px-2.5 py-1 rounded whitespace-nowrap ${activeTab === 'tutor' ? 'bg-[#9E2A2B] text-white font-semibold' : ''}`}
+          className={`min-h-[40px] px-3 py-2 rounded-lg whitespace-nowrap transition-colors flex items-center justify-center cursor-pointer ${
+            activeTab === 'tutor'
+              ? 'bg-[#9E2A2B] text-white font-semibold shadow-2xs'
+              : 'text-stone-700 hover:bg-stone-200/60'
+          }`}
         >
           Tutor
         </button>
         <button
           onClick={() => onSelectTab('chapters')}
-          className={`px-2.5 py-1 rounded whitespace-nowrap ${activeTab === 'chapters' ? 'bg-[#9E2A2B] text-white font-semibold' : ''}`}
+          className={`min-h-[40px] px-3 py-2 rounded-lg whitespace-nowrap transition-colors flex items-center justify-center cursor-pointer ${
+            activeTab === 'chapters'
+              ? 'bg-[#9E2A2B] text-white font-semibold shadow-2xs'
+              : 'text-stone-700 hover:bg-stone-200/60'
+          }`}
         >
           Capitoli
         </button>
         <button
           onClick={() => onSelectTab('tables')}
-          className={`px-2.5 py-1 rounded whitespace-nowrap ${activeTab === 'tables' ? 'bg-[#9E2A2B] text-white font-semibold' : ''}`}
+          className={`min-h-[40px] px-3 py-2 rounded-lg whitespace-nowrap transition-colors flex items-center justify-center cursor-pointer ${
+            activeTab === 'tables'
+              ? 'bg-[#9E2A2B] text-white font-semibold shadow-2xs'
+              : 'text-stone-700 hover:bg-stone-200/60'
+          }`}
         >
           Tabelle
         </button>
         <button
           onClick={() => onSelectTab('dictionary')}
-          className={`px-2.5 py-1 rounded whitespace-nowrap ${activeTab === 'dictionary' ? 'bg-[#9E2A2B] text-white font-semibold' : ''}`}
+          className={`min-h-[40px] px-3 py-2 rounded-lg whitespace-nowrap transition-colors flex items-center justify-center cursor-pointer ${
+            activeTab === 'dictionary'
+              ? 'bg-[#9E2A2B] text-white font-semibold shadow-2xs'
+              : 'text-stone-700 hover:bg-stone-200/60'
+          }`}
         >
           Dizionario
         </button>
         <button
           onClick={() => onSelectTab('stats')}
-          className={`px-2.5 py-1 rounded whitespace-nowrap ${activeTab === 'stats' ? 'bg-[#9E2A2B] text-white font-semibold' : ''}`}
+          className={`min-h-[40px] px-3 py-2 rounded-lg whitespace-nowrap transition-colors flex items-center justify-center cursor-pointer ${
+            activeTab === 'stats'
+              ? 'bg-[#9E2A2B] text-white font-semibold shadow-2xs'
+              : 'text-stone-700 hover:bg-stone-200/60'
+          }`}
         >
-          Progressi
+          Ripasso
         </button>
       </div>
     </header>

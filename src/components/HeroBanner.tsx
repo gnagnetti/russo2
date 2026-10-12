@@ -5,17 +5,29 @@ interface HeroBannerProps {
   onStartTutor: () => void;
   onExploreChapters: () => void;
   onOpenDictionary: () => void;
+  onDismiss?: () => void;
 }
 
 export const HeroBanner: React.FC<HeroBannerProps> = ({
   onStartTutor,
   onExploreChapters,
   onOpenDictionary,
+  onDismiss,
 }) => {
   const [imageLoaded, setImageLoaded] = useState(true);
 
   return (
-    <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-xs">
+    <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-xs relative">
+      {onDismiss && (
+        <button
+          onClick={onDismiss}
+          title="Nascondi presentazione e vai agli esercizi"
+          className="absolute top-3 right-3 z-10 text-xs text-stone-500 hover:text-stone-900 bg-white/90 hover:bg-stone-100 border border-stone-200 px-2.5 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
+        >
+          <span>✕</span>
+          <span className="hidden sm:inline">Nascondi</span>
+        </button>
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
         {/* Left Column: Pedagogical Introduction */}
         <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-6">

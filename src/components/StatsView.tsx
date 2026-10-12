@@ -26,6 +26,8 @@ export const StatsView: React.FC<StatsViewProps> = ({
   onStartErrorReview,
   onStartPractice,
 }) => {
+  const [showConfirmReset, setShowConfirmReset] = React.useState(false);
+
   const accuracyPct =
     stats.totalAnswered > 0
       ? Math.round((stats.totalCorrect / stats.totalAnswered) * 100)
@@ -36,15 +38,10 @@ export const StatsView: React.FC<StatsViewProps> = ({
     (stats.completedExerciseIds.length / totalPossible) * 100
   );
 
-  const handleReset = () => {
-    if (
-      window.confirm(
-        'Sei sicuro di voler azzerare tutti i progressi e le statistiche di apprendimento?'
-      )
-    ) {
-      const reset = resetAllProgress();
-      onUpdateStats(reset);
-    }
+  const handleExecuteReset = () => {
+    const reset = resetAllProgress();
+    onUpdateStats(reset);
+    setShowConfirmReset(false);
   };
 
   const caseKeys: CaseType[] = [
@@ -74,14 +71,32 @@ export const StatsView: React.FC<StatsViewProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleReset}
-            className="px-3.5 py-2 text-xs font-medium text-stone-600 hover:text-rose-700 hover:bg-rose-50 border border-stone-200 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Azzera Progressi</span>
-          </button>
+        <div className="flex items-center gap-2">
+          {showConfirmReset ? (
+            <div className="flex items-center gap-2 bg-rose-50 border border-rose-200 p-1.5 rounded-lg text-xs">
+              <span className="text-rose-800 font-medium px-1">Confermi azzeramento?</span>
+              <button
+                onClick={handleExecuteReset}
+                className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded font-medium cursor-pointer"
+              >
+                Sì, azzera
+              </button>
+              <button
+                onClick={() => setShowConfirmReset(false)}
+                className="px-2.5 py-1 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded font-medium cursor-pointer"
+              >
+                Annulla
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowConfirmReset(true)}
+              className="px-3.5 py-2 text-xs font-medium text-stone-600 hover:text-rose-700 hover:bg-rose-50 border border-stone-200 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Azzera Progressi</span>
+            </button>
+          )}
         </div>
       </div>
 

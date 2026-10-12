@@ -47,7 +47,7 @@ export const ChapterExplorer: React.FC<ChapterExplorerProps> = ({
             (ex) => ex.sectionId === section.id
           );
           const completedInSection = sectionExercises.filter((ex) =>
-            stats.completedExerciseIds.includes(ex.id)
+            (stats?.completedExerciseIds || []).includes(ex.id)
           ).length;
           const sectionPct =
             sectionExercises.length > 0

@@ -60,7 +60,7 @@ export const DictionaryView: React.FC<DictionaryViewProps> = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Cerca verbo russo (es. верить, гордиться) o significato italiano (es. sperare, guidare)..."
-              className="w-full pl-10 pr-4 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#9E2A2B] focus:border-[#9E2A2B] transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-base sm:text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-[#9E2A2B] focus:border-[#9E2A2B] transition-all"
             />
             {searchTerm && (
               <button
