@@ -178,6 +178,9 @@ export const TutorInteractiveMode: React.FC<TutorInteractiveModeProps> = ({
       setCurrentIndex(0);
     }
     resetQuestionState();
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handlePrevExercise = () => {
@@ -187,6 +190,9 @@ export const TutorInteractiveMode: React.FC<TutorInteractiveModeProps> = ({
       setCurrentIndex(filteredExercises.length - 1);
     }
     resetQuestionState();
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleRandomExercise = () => {
@@ -200,6 +206,9 @@ export const TutorInteractiveMode: React.FC<TutorInteractiveModeProps> = ({
     }
     setCurrentIndex(rand);
     resetQuestionState();
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleRetryCurrent = () => {
@@ -212,6 +221,10 @@ export const TutorInteractiveMode: React.FC<TutorInteractiveModeProps> = ({
   };
 
   const isCurrentCorrect = selectedOption !== null && selectedOption === currentExercise.correctIndex;
+
+  const sec1Count = useMemo(() => EXERCISES_DATABASE.filter((e) => e.sectionId === 'section_1').length, []);
+  const sec2Count = useMemo(() => EXERCISES_DATABASE.filter((e) => e.sectionId === 'section_2').length, []);
+  const sec3Count = useMemo(() => EXERCISES_DATABASE.filter((e) => e.sectionId === 'section_3').length, []);
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -260,7 +273,7 @@ export const TutorInteractiveMode: React.FC<TutorInteractiveModeProps> = ({
                   : 'bg-stone-100 text-stone-600 hover:text-stone-900 hover:bg-stone-200/70'
               }`}
             >
-              Sez. I: Forme e Casi (70)
+              Sez. I: Forme e Casi ({sec1Count})
             </button>
             <button
               onClick={() => handleSectionFilterChange('section_2')}
@@ -270,7 +283,7 @@ export const TutorInteractiveMode: React.FC<TutorInteractiveModeProps> = ({
                   : 'bg-stone-100 text-stone-600 hover:text-stone-900 hover:bg-stone-200/70'
               }`}
             >
-              Sez. II: Lessico Letterario (115)
+              Sez. II: Lessico Letterario ({sec2Count})
             </button>
             <button
               onClick={() => handleSectionFilterChange('section_3')}
@@ -280,7 +293,7 @@ export const TutorInteractiveMode: React.FC<TutorInteractiveModeProps> = ({
                   : 'bg-stone-100 text-stone-600 hover:text-stone-900 hover:bg-stone-200/70'
               }`}
             >
-              Sez. III: Scientifico (70)
+              Sez. III: Scientifico ({sec3Count})
             </button>
             {(stats.incorrectExerciseIds || []).length > 0 && (
               <button
@@ -631,6 +644,28 @@ export const TutorInteractiveMode: React.FC<TutorInteractiveModeProps> = ({
           </span>
         </button>
       </div>
+
+      {/* Floating Sticky Mobile Quick Action Bar (Appears above mobile bottom nav) */}
+      {isAnswered && (
+        <div className="md:hidden fixed bottom-[58px] left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 px-3 py-2.5 shadow-[0_-3px_10px_rgba(0,0,0,0.08)] flex items-center justify-between gap-2.5">
+          <button
+            type="button"
+            onClick={handleRetryCurrent}
+            className="px-3 py-2 text-xs font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 active:bg-stone-300 rounded-lg flex items-center gap-1.5 cursor-pointer touch-manipulation min-h-[42px]"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Riprova</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleNextExercise}
+            className="flex-1 px-4 py-2 bg-[#9E2A2B] active:bg-[#852324] text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs touch-manipulation min-h-[42px]"
+          >
+            <span>Prossimo Quesito</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

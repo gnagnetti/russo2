@@ -16,7 +16,7 @@ export const ChapterExplorer: React.FC<ChapterExplorerProps> = ({
   return (
     <div className="space-y-8">
       {/* Intro Header */}
-      <div className="bg-white border border-stone-200 rounded-xl p-6 shadow-xs">
+      <div className="bg-white border border-stone-200 rounded-xl p-4 sm:p-6 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-[#9E2A2B] uppercase tracking-wider">
@@ -60,7 +60,7 @@ export const ChapterExplorer: React.FC<ChapterExplorerProps> = ({
               className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-xs"
             >
               {/* Section Header Banner */}
-              <div className="p-6 border-b border-stone-100 bg-stone-50/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="p-4 sm:p-6 border-b border-stone-100 bg-stone-50/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-xs font-semibold text-stone-500">
                     <span className="text-[#9E2A2B]">SEZIONE {section.number}</span>
@@ -78,25 +78,25 @@ export const ChapterExplorer: React.FC<ChapterExplorerProps> = ({
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
-                  <div className="text-right hidden sm:block">
-                    <span className="text-xs text-stone-500 block">Avanzamento</span>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-stone-200/60">
+                  <div className="text-left sm:text-right flex sm:block items-center justify-between">
+                    <span className="text-xs text-stone-500 sm:block">Avanzamento:</span>
                     <span className="text-xs font-bold text-stone-900 tabular-nums">
                       {completedInSection}/{sectionExercises.length} ({sectionPct}%)
                     </span>
                   </div>
                   <button
                     onClick={() => onSelectSectionForPractice(section.id)}
-                    className="px-4 py-2 bg-[#9E2A2B] hover:bg-[#852324] text-white text-xs font-semibold rounded-lg flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
+                    className="w-full sm:w-auto px-4 py-2.5 bg-[#9E2A2B] hover:bg-[#852324] text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer min-h-[44px] touch-manipulation"
                   >
-                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <Play className="w-3.5 h-3.5 fill-current shrink-0" />
                     <span>Esercitati su Sezione {section.number}</span>
                   </button>
                 </div>
               </div>
 
               {/* Subtopics List */}
-              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {section.subtopics.map((sub, idx) => (
                   <div
                     key={sub.id}

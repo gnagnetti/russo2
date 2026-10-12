@@ -69,10 +69,11 @@ export default function App() {
         }}
         onQuickPractice={handleQuickPractice}
         streak={stats.streak}
+        errorCount={(stats.incorrectExerciseIds || []).length}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8 pb-24 md:pb-8">
         {/* Hero banner shown on main entrance or toggled */}
         {showHero && activeTab === 'tutor' && (
           <HeroBanner
@@ -123,7 +124,7 @@ export default function App() {
       </main>
 
       {/* Quiet, Dignified Academic Footer */}
-      <footer className="mt-auto border-t border-stone-200 bg-white text-stone-500 text-xs py-6">
+      <footer className="mt-auto border-t border-stone-200 bg-white text-stone-500 text-xs py-6 mb-16 md:mb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="space-y-0.5 text-center sm:text-left">
             <p className="font-semibold text-stone-800">

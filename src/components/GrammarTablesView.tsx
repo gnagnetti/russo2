@@ -11,7 +11,7 @@ export const GrammarTablesView: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="bg-white border border-stone-200 rounded-xl p-6 shadow-xs">
+      <div className="bg-white border border-stone-200 rounded-xl p-4 sm:p-6 shadow-xs">
         <div className="flex items-center gap-2 text-xs font-semibold text-[#9E2A2B] uppercase tracking-wider">
           <BookOpen className="w-4 h-4" />
           <span>Справочные таблицы (Tavole di Riferimento 1–8)</span>
@@ -24,13 +24,13 @@ export const GrammarTablesView: React.FC = () => {
           pagine 26–36 del manuale di A.V. Velichko.
         </p>
 
-        {/* Table Selector Tabs */}
-        <div className="mt-5 flex flex-wrap gap-2">
+        {/* Table Selector Tabs - Smooth horizontal scroll on mobile */}
+        <div className="mt-4 sm:mt-5 flex overflow-x-auto pb-1.5 sm:flex-wrap gap-1.5 sm:gap-2 no-scrollbar touch-pan-x">
           {GRAMMAR_TABLES.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setSelectedTableId(tab.id)}
-              className={`px-3 py-2 text-xs rounded-lg transition-all border cursor-pointer ${
+              className={`px-3 py-2 text-xs rounded-lg transition-all border whitespace-nowrap cursor-pointer touch-manipulation min-h-[38px] ${
                 selectedTableId === tab.id
                   ? 'bg-stone-900 border-stone-900 text-white font-semibold shadow-xs'
                   : 'bg-stone-50 border-stone-200 text-stone-700 hover:bg-stone-100'
@@ -44,7 +44,7 @@ export const GrammarTablesView: React.FC = () => {
       </div>
 
       {/* Selected Table Card */}
-      <div className="bg-white border border-stone-200 rounded-xl p-6 shadow-xs space-y-6">
+      <div className="bg-white border border-stone-200 rounded-xl p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-6">
         <div>
           <span className="text-xs font-bold text-[#9E2A2B] uppercase tracking-wide">
             {currentTable.tableNumber}
@@ -57,8 +57,14 @@ export const GrammarTablesView: React.FC = () => {
           </p>
         </div>
 
+        {/* Mobile Horizontal Scroll Cue */}
+        <div className="sm:hidden text-[11px] text-stone-500 py-1 px-2.5 bg-stone-50 rounded-lg border border-stone-200/70 flex items-center justify-between">
+          <span>Tavola comparativa</span>
+          <span className="text-stone-400 font-medium">← Scorri orizzontalmente →</span>
+        </div>
+
         {/* The Matrix Table */}
-        <div className="overflow-x-auto border border-stone-200 rounded-xl">
+        <div className="overflow-x-auto border border-stone-200 rounded-xl touch-pan-x">
           <table className="w-full text-left text-xs sm:text-sm">
             <thead>
               <tr className="bg-stone-100/90 text-stone-900 font-semibold border-b border-stone-200">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Award,
   Flame,
@@ -8,10 +8,22 @@ import {
   Play,
   BookmarkCheck,
   TrendingUp,
+  Calendar,
+  Check,
 } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend,
+} from 'recharts';
 import { UserStats, CaseType } from '../types';
 import { EXERCISES_DATABASE } from '../data/exercises';
-import { resetAllProgress } from '../utils/storage';
+import { resetAllProgress, getLast7DaysHistory } from '../utils/storage';
 
 interface StatsViewProps {
   stats: UserStats;
@@ -27,6 +39,16 @@ export const StatsView: React.FC<StatsViewProps> = ({
   onStartPractice,
 }) => {
   const [showConfirmReset, setShowConfirmReset] = React.useState(false);
+
+  const chartData = useMemo(() => getLast7DaysHistory(stats), [stats]);
+  const last7DaysCorrectTotal = useMemo(
+    () => chartData.reduce((acc, curr) => acc + curr.corrette, 0),
+    [chartData]
+  );
+  const last7DaysAnsweredTotal = useMemo(
+    () => chartData.reduce((acc, curr) => acc + curr.risposte, 0),
+    [chartData]
+  );
 
   const accuracyPct =
     stats.totalAnswered > 0
@@ -187,6 +209,120 @@ export const StatsView: React.FC<StatsViewProps> = ({
               </span>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* 7-Day Performance Line Chart with Recharts */}
+      <div className="bg-white border border-stone-200 rounded-xl p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-100">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#9E2A2B] uppercase tracking-wider">
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Attività Recente · Ultimi 7 Giorni</span>
+            </div>
+            <h2 className="text-base sm:text-lg font-bold font-serif text-stone-900 mt-0.5">
+              Andamento delle Risposte Esatte
+            </h2>
+            <p className="text-xs text-stone-500 mt-0.5">
+              Evoluzione temporale del rendimento giornaliero nelle sessioni di esercizio del manuale.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="bg-emerald-50 border border-emerald-200/80 px-3 py-1.5 rounded-lg text-xs">
+              <span className="text-stone-500 block text-[10px]">Esatte (7 gg)</span>
+              <span className="font-bold text-emerald-800 text-sm tabular-nums">
+                {last7DaysCorrectTotal} risposte
+              </span>
+            </div>
+            <div className="bg-stone-50 border border-stone-200 px-3 py-1.5 rounded-lg text-xs">
+              <span className="text-stone-500 block text-[10px]">Totale (7 gg)</span>
+              <span className="font-bold text-stone-800 text-sm tabular-nums">
+                {last7DaysAnsweredTotal} svolti
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Recharts LineChart */}
+        <div className="w-full h-64 sm:h-72 pt-2">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 10, right: 15, left: -15, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <XAxis
+                dataKey="dayLabel"
+                stroke="#94a3b8"
+                fontSize={11}
+                tickLine={false}
+                axisLine={{ stroke: '#e2e8f0' }}
+              />
+              <YAxis
+                allowDecimals={false}
+                stroke="#94a3b8"
+                fontSize={11}
+                tickLine={false}
+                axisLine={{ stroke: '#e2e8f0' }}
+              />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    const dataPoint = payload[0].payload;
+                    return (
+                      <div className="bg-stone-900 text-white text-xs p-2.5 rounded-lg shadow-lg border border-stone-800 space-y-1">
+                        <p className="font-bold text-stone-200 border-b border-stone-800 pb-1">
+                          {label}
+                        </p>
+                        <p className="text-emerald-400 flex items-center justify-between gap-3">
+                          <span>Risposte Esatte:</span>
+                          <span className="font-bold tabular-nums">{dataPoint.corrette}</span>
+                        </p>
+                        <p className="text-stone-300 flex items-center justify-between gap-3">
+                          <span>Totale Quesiti:</span>
+                          <span className="font-bold tabular-nums">{dataPoint.risposte}</span>
+                        </p>
+                        {dataPoint.risposte > 0 && (
+                          <p className="text-amber-400 flex items-center justify-between gap-3 pt-0.5 border-t border-stone-800 text-[11px]">
+                            <span>Precisione:</span>
+                            <span className="font-bold tabular-nums">{dataPoint.accuratezza}%</span>
+                          </p>
+                        )}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend
+                verticalAlign="top"
+                align="right"
+                height={30}
+                iconType="circle"
+                wrapperStyle={{ fontSize: '11px', paddingBottom: '8px' }}
+              />
+              <Line
+                type="monotone"
+                dataKey="corrette"
+                name="Risposte Corrette"
+                stroke="#059669"
+                strokeWidth={2.5}
+                dot={{ r: 4, fill: '#059669', strokeWidth: 1, stroke: '#ffffff' }}
+                activeDot={{ r: 6, fill: '#059669', stroke: '#ffffff', strokeWidth: 2 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="risposte"
+                name="Totale Quesiti"
+                stroke="#9E2A2B"
+                strokeWidth={1.5}
+                strokeDasharray="4 4"
+                dot={{ r: 3, fill: '#9E2A2B' }}
+                activeDot={{ r: 5 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
 

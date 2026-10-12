@@ -52,6 +52,7 @@ export interface UserStats {
   incorrectExerciseIds: string[];
   bookmarkedExerciseIds: string[];
   byCase: Record<CaseType, { total: number; correct: number }>;
+  history?: Record<string, { answered: number; correct: number }>;
 }
 
 export interface SectionInfo {

@@ -19,6 +19,7 @@ const INITIAL_STATS: UserStats = {
     Variabile: { total: 0, correct: 0 },
     'Concordanza Numerali': { total: 0, correct: 0 },
   },
+  history: {},
 };
 
 export function loadUserStats(): UserStats {
@@ -36,6 +37,7 @@ export function loadUserStats(): UserStats {
         ...INITIAL_STATS.byCase,
         ...(parsed.byCase && typeof parsed.byCase === 'object' ? parsed.byCase : {}),
       },
+      history: parsed.history && typeof parsed.history === 'object' ? parsed.history : {},
     };
   } catch {
     return INITIAL_STATS;
@@ -66,6 +68,7 @@ export function recordExerciseAttempt(
       ...INITIAL_STATS.byCase,
       ...(stats?.byCase || {}),
     },
+    history: stats?.history && typeof stats.history === 'object' ? stats.history : {},
   };
 
   const newStreak = isCorrect ? (safeStats.streak || 0) + 1 : 0;
@@ -91,6 +94,17 @@ export function recordExerciseAttempt(
     },
   };
 
+  // Record daily history (YYYY-MM-DD)
+  const today = new Date().toISOString().split('T')[0];
+  const todayRecord = safeStats.history?.[today] || { answered: 0, correct: 0 };
+  const updatedHistory = {
+    ...(safeStats.history || {}),
+    [today]: {
+      answered: todayRecord.answered + 1,
+      correct: todayRecord.correct + (isCorrect ? 1 : 0),
+    },
+  };
+
   const updated: UserStats = {
     ...safeStats,
     totalAnswered: (safeStats.totalAnswered || 0) + 1,
@@ -100,6 +114,7 @@ export function recordExerciseAttempt(
     completedExerciseIds: Array.from(completedSet),
     incorrectExerciseIds: Array.from(incorrectSet),
     byCase: updatedByCase,
+    history: updatedHistory,
   };
 
   saveUserStats(updated);
@@ -129,4 +144,50 @@ export function resetAllProgress(): UserStats {
     console.error(e);
   }
   return INITIAL_STATS;
+}
+
+export interface DayChartPoint {
+  date: string;
+  dayLabel: string;
+  corrette: number;
+  risposte: number;
+  accuratezza: number;
+}
+
+export function getLast7DaysHistory(stats: UserStats): DayChartPoint[] {
+  const result: DayChartPoint[] = [];
+  const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const dayName = daysOfWeek[d.getDay()];
+    const dayNum = String(d.getDate()).padStart(2, '0');
+    const monthNum = String(d.getMonth() + 1).padStart(2, '0');
+    const dayLabel = `${dayName} ${dayNum}/${monthNum}`;
+
+    const record = stats?.history?.[dateStr];
+    // If there is recorded data for that day, use it.
+    // If today has no separate record yet but stats.totalAnswered > 0, reflect current session.
+    let corrette = record?.correct ?? 0;
+    let risposte = record?.answered ?? 0;
+
+    if (i === 0 && !record && stats.totalAnswered > 0) {
+      corrette = stats.totalCorrect;
+      risposte = stats.totalAnswered;
+    }
+
+    const accuratezza = risposte > 0 ? Math.round((corrette / risposte) * 100) : 0;
+
+    result.push({
+      date: dateStr,
+      dayLabel,
+      corrette,
+      risposte,
+      accuratezza,
+    });
+  }
+
+  return result;
 }
